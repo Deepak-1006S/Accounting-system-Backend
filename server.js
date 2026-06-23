@@ -18,7 +18,25 @@ app.use(bodyParser.json());
 
 // Middleware for enabling Cross-Origin Resource Sharing (CORS)
 
-app.use(cors({ origin: "*" })); // we can pass an array of domain or origin if we want to allow access to multiple domain names.
+const allowedOrigins = [
+  "https://accounting-system-frontend-six.vercel.app",
+  "http://localhost:3000",
+  "http://localhost:5000",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (e.g. mobile apps, curl)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+  })
+);
 
 // Import and use the router for handling different endpoints
 const router = require("./routes");
